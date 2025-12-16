@@ -124,7 +124,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.2.1
 python-json-logger==4.0.0
 pytz==2025.2
-#pywin32==311
+pywin32==311
 pywinpty==3.0.2
 PyYAML==6.0.3
 pyzmq==27.1.0
@@ -170,4 +170,5 @@ widgetsnbextension==4.0.15
 xgboost==3.1.2
 xverse==1.0.5
 zipp==3.23.0
+
 
