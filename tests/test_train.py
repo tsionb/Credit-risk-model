@@ -15,7 +15,7 @@ def test_metrics_calculation():
     y_pred = np.array([0, 1, 0, 0, 0])
     y_pred_proba = np.array([0.1, 0.9, 0.3, 0.4, 0.2])
     
-    metrics = trainer._calculate_metrics(y_true, y_pred, y_pred_proba)
+    metrics = trainer.calculate_metrics(y_true, y_pred, y_pred_proba)
     
     assert 'roc_auc' in metrics
     assert 'accuracy' in metrics
@@ -31,7 +31,7 @@ def test_model_file_exists():
     """Test that model file was created"""
     assert os.path.exists('models/best_model.pkl'), "Best model not saved"
     print(" Model file exists")
-    return True
+    
 
 if __name__ == "__main__":
     test_metrics_calculation()
