@@ -93,7 +93,7 @@ class CreditRiskModelTrainer:
         
         # Handle severe imbalance
         if class_counts.min() / class_counts.max() < 0.1:
-            print("⚠️ Severe class imbalance detected. Using class_weight='balanced'")
+            print(" Severe class imbalance detected. Using class_weight='balanced'")
             self.use_class_weight = True
         else:
             self.use_class_weight = False
@@ -104,7 +104,7 @@ class CreditRiskModelTrainer:
             stratify=y  # Preserve class distribution
         )
         
-        print(f"\n✅ Data prepared:")
+        print(f"\n Data prepared:")
         print(f"  Training set: {self.X_train.shape}")
         print(f"  Test set: {self.X_test.shape}")
         print(f"  Features: {self.X_train.shape[1]}")
@@ -147,7 +147,7 @@ class CreditRiskModelTrainer:
             y_pred_proba = grid_search.predict_proba(self.X_test)[:, 1]
             
             # Calculate metrics
-            metrics = self._calculate_metrics(self.y_test, y_pred, y_pred_proba)
+            metrics = self.calculate_metrics(self.y_test, y_pred, y_pred_proba)
             
             # Log metrics
             for metric_name, metric_value in metrics.items():
@@ -166,8 +166,8 @@ class CreditRiskModelTrainer:
                 'best_params': grid_search.best_params_
             }
             
-            print(f"✅ Best parameters: {grid_search.best_params_}")
-            print(f"✅ Best ROC-AUC: {metrics['roc_auc']:.4f}")
+            print(f" Best parameters: {grid_search.best_params_}")
+            print(f" Best ROC-AUC: {metrics['roc_auc']:.4f}")
             
             # Update best model
             if metrics['roc_auc'] > self.best_score:
@@ -212,7 +212,7 @@ class CreditRiskModelTrainer:
             y_pred_proba = random_search.predict_proba(self.X_test)[:, 1]
             
             # Calculate metrics
-            metrics = self._calculate_metrics(self.y_test, y_pred, y_pred_proba)
+            metrics = self.calculate_metrics(self.y_test, y_pred, y_pred_proba)
             
             # Log metrics
             for metric_name, metric_value in metrics.items():
@@ -235,8 +235,8 @@ class CreditRiskModelTrainer:
                 'best_params': random_search.best_params_
             }
             
-            print(f"✅ Best parameters: {random_search.best_params_}")
-            print(f"✅ Best ROC-AUC: {metrics['roc_auc']:.4f}")
+            print(f" Best parameters: {random_search.best_params_}")
+            print(f" Best ROC-AUC: {metrics['roc_auc']:.4f}")
             
             # Update best model
             if metrics['roc_auc'] > self.best_score:
@@ -249,7 +249,7 @@ class CreditRiskModelTrainer:
         try:
             import xgboost as xgb
         except ImportError:
-            print("⚠️ XGBoost not installed. Skipping XGBoost training.")
+            print(" XGBoost not installed. Skipping XGBoost training.")
             return
         
         print("\n" + "="*50)
@@ -291,7 +291,7 @@ class CreditRiskModelTrainer:
             y_pred_proba = random_search.predict_proba(self.X_test)[:, 1]
             
             # Calculate metrics
-            metrics = self._calculate_metrics(self.y_test, y_pred, y_pred_proba)
+            metrics = self.calculate_metrics(self.y_test, y_pred, y_pred_proba)
             
             # Log metrics
             for metric_name, metric_value in metrics.items():
@@ -307,8 +307,8 @@ class CreditRiskModelTrainer:
                 'best_params': random_search.best_params_
             }
             
-            print(f"✅ Best parameters: {random_search.best_params_}")
-            print(f"✅ Best ROC-AUC: {metrics['roc_auc']:.4f}")
+            print(f" Best parameters: {random_search.best_params_}")
+            print(f" Best ROC-AUC: {metrics['roc_auc']:.4f}")
             
             # Update best model
             if metrics['roc_auc'] > self.best_score:
@@ -316,7 +316,7 @@ class CreditRiskModelTrainer:
                 self.best_model = random_search.best_estimator_
                 self.best_model_name = "xgboost"
     
-    def _calculate_metrics(self, y_true, y_pred, y_pred_proba):
+    def calculate_metrics(self, y_true, y_pred, y_pred_proba):
         """Calculate evaluation metrics"""
         return {
             'accuracy': accuracy_score(y_true, y_pred),
@@ -353,10 +353,10 @@ class CreditRiskModelTrainer:
             
             # Log to MLflow
             mlflow.log_artifact(plot_path)
-            print(f"📊 ROC curve saved: {plot_path}")
+            print(f" ROC curve saved: {plot_path}")
             
         except Exception as e:
-            print(f"⚠️ Could not create ROC curve: {e}")
+            print(f" Could not create ROC curve: {e}")
     
     def _plot_feature_importance(self, model, feature_names, title):
         """Plot feature importance - Thread-safe version"""
@@ -397,10 +397,10 @@ class CreditRiskModelTrainer:
             
             # Log to MLflow
             mlflow.log_artifact(plot_path)
-            print(f"📊 Feature importance saved: {plot_path}")
+            print(f" Feature importance saved: {plot_path}")
             
         except Exception as e:
-            print(f"⚠️ Could not plot feature importance: {e}")
+            print(f" Could not plot feature importance: {e}")
     
     def compare_models(self):
         """Compare all trained models"""
@@ -426,13 +426,13 @@ class CreditRiskModelTrainer:
             })
         
         comparison_df = pd.DataFrame(comparison_data)
-        print("\n📊 Model Performance Comparison:")
+        print("\n Model Performance Comparison:")
         print(comparison_df.to_string(index=False))
         
         # Find best model
         best_model_name = max(self.models.items(), 
                             key=lambda x: x[1]['metrics']['roc_auc'])[0]
-        print(f"\n🏆 Best Model: {best_model_name.replace('_', ' ').title()}")
+        print(f"\n Best Model: {best_model_name.replace('_', ' ').title()}")
         print(f"   ROC-AUC: {self.models[best_model_name]['metrics']['roc_auc']:.4f}")
         
         # Save comparison
@@ -444,12 +444,12 @@ class CreditRiskModelTrainer:
     def save_best_model(self, output_path='models/best_model.pkl'):
         """Save the best model"""
         if self.best_model is None:
-            print("⚠️ No best model to save. Train models first.")
+            print(" No best model to save. Train models first.")
             return
         
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         joblib.dump(self.best_model, output_path)
-        print(f"💾 Best model saved to: {output_path}")
+        print(f" Best model saved to: {output_path}")
         
         # Also save model info
         model_info = {
@@ -462,7 +462,7 @@ class CreditRiskModelTrainer:
 
 def main():
     """Main training pipeline"""
-    print("🎯 CREDIT RISK MODEL TRAINING - TASK 4")
+    print("🎯 CREDIT RISK MODEL TRAINING - TASK 5")
     print("="*60)
     
     # Initialize trainer
@@ -476,7 +476,7 @@ def main():
         features_path='data/processed/features.csv',
         target_path='data/processed/target.csv',
         test_size=0.2,
-        create_target=True
+        create_target=False
     )
     
     # Step 2: Train models
